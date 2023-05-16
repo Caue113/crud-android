@@ -19,6 +19,7 @@ import com.example.prjcrud.databinding.ActivityMainBinding;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,11 +65,33 @@ public class MainActivity extends AppCompatActivity {
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Salvando...", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                findViewById(R.id.include_listagem).setVisibility(View.VISIBLE);
-                findViewById(R.id.include_cadastro).setVisibility(View.INVISIBLE);
-                findViewById(R.id.fab).setVisibility(View.VISIBLE);
+
+                EditText inputNome = (EditText) findViewById(R.id.inputNome);
+                EditText inputCelular = (EditText) findViewById(R.id.inputTelefone);
+
+                String nome = inputNome.getText().toString();
+                String celular = inputCelular.getText().toString();
+                int situacao = 1;
+
+                DbAmigosDAO dao = new DbAmigosDAO(getBaseContext());
+                boolean sucesso = dao.Salvar(nome, celular, situacao);
+
+                if(sucesso){
+                    Snackbar.make(view, "Salvando dados de ["+nome+"] com sucesso", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+
+                    inputNome.setText("");
+                    inputCelular.setText("");
+
+                    findViewById(R.id.include_listagem).setVisibility(View.VISIBLE);
+                    findViewById(R.id.include_cadastro).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.fab).setVisibility(View.VISIBLE);
+                }
+                else{
+                    Snackbar.make(view, "O processo de salvar falhou. Veja os Logs.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
             }
         });
 
